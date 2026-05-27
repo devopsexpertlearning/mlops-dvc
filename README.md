@@ -228,6 +228,44 @@ Large companies use DVC for:
 
 # 6. Architecture Overview
 
+## Enterprise Git + DVC Architecture
+
+```text
+                    ┌──────────────────────┐
+                    │   Data Scientist     │
+                    │   MLOps Engineer     │
+                    └──────────┬───────────┘
+                               │
+                               │ git push
+                               ▼
+                    ┌──────────────────────┐
+                    │    Git Repository    │
+                    │----------------------│
+                    │ Python Code          │
+                    │ YAML Configs         │
+                    │ DVC Metadata         │
+                    │ Pipeline Files       │
+                    └──────────┬───────────┘
+                               │
+                               │ dvc push
+                               ▼
+                    ┌──────────────────────┐
+                    │    DVC Remote        │
+                    │----------------------│
+                    │ Dataset Storage      │
+                    │ Model Storage        │
+                    │ Artifacts            │
+                    └──────────┬───────────┘
+                               │
+             ┌─────────────────┼─────────────────┐
+             ▼                 ▼                 ▼
+      ┌────────────┐    ┌────────────┐    ┌────────────┐
+      │ AWS S3     │    │ Azure Blob │    │ GCP Bucket │
+      └────────────┘    └────────────┘    └────────────┘
+```
+
+---
+
 ```text
                Developer
                    |
@@ -526,6 +564,40 @@ DVC = Storage + Tracking system for ML assets
 
 # How DVC Versioning Actually Works Internally
 
+## DVC Internal Versioning Workflow
+
+```text
+          customer.csv
+                 │
+                 │ dvc add
+                 ▼
+      ┌──────────────────────┐
+      │ DVC Calculates Hash  │
+      │ md5: a1b2c3d4        │
+      └──────────┬───────────┘
+                 │
+                 ▼
+      ┌──────────────────────┐
+      │ Stored in DVC Cache  │
+      │ .dvc/cache/          │
+      └──────────┬───────────┘
+                 │
+                 ▼
+      ┌──────────────────────┐
+      │ customer.csv.dvc     │
+      │ Metadata File        │
+      └──────────┬───────────┘
+                 │
+                 │ git commit
+                 ▼
+      ┌──────────────────────┐
+      │ Git Tracks Metadata  │
+      │ NOT Actual Dataset   │
+      └──────────────────────┘
+```
+
+---
+
 This is one of the most important interview concepts.
 
 Suppose you have:
@@ -688,6 +760,36 @@ DVC restores:
 - old pipeline outputs
 
 This is EXTREMELY important in production systems.
+
+---
+
+# Git vs DVC Responsibilities
+
+```text
+                ┌─────────────────────┐
+                │        Git          │
+                ├─────────────────────┤
+                │ Python Code         │
+                │ YAML Files          │
+                │ Dockerfiles         │
+                │ CI/CD Pipelines     │
+                │ Infrastructure Code │
+                │ DVC Metadata Files  │
+                └─────────┬───────────┘
+                          │
+                          │ works with
+                          ▼
+                ┌─────────────────────┐
+                │        DVC          │
+                ├─────────────────────┤
+                │ Datasets            │
+                │ ML Models           │
+                │ Binary Artifacts    │
+                │ Checkpoints         │
+                │ Pipeline Outputs    │
+                │ Experiment Data     │
+                └─────────────────────┘
+```
 
 ---
 
@@ -1307,6 +1409,46 @@ dvc pull
 
 # 21. CI/CD Integration
 
+## Enterprise CI/CD Pipeline with DVC
+
+```text
+      Developer Pushes Code
+                 │
+                 ▼
+        ┌────────────────┐
+        │ GitHub Actions │
+        └───────┬────────┘
+                │
+                ▼
+        ┌────────────────┐
+        │ dvc pull       │
+        │ Fetch Dataset  │
+        └───────┬────────┘
+                │
+                ▼
+        ┌────────────────┐
+        │ Model Training │
+        └───────┬────────┘
+                │
+                ▼
+        ┌────────────────┐
+        │ Evaluation     │
+        └───────┬────────┘
+                │
+                ▼
+        ┌────────────────┐
+        │ Model Registry │
+        └───────┬────────┘
+                │
+                ▼
+        ┌────────────────┐
+        │ Kubernetes     │
+        │ Deployment     │
+        └────────────────┘
+```
+
+---
+
 Enterprise companies integrate DVC with:
 
 - GitHub Actions
@@ -1482,6 +1624,51 @@ Reproduces ML pipeline.
 ---
 
 # 27. Real Enterprise Example
+
+## Enterprise ML Workflow Diagram
+
+```text
+         ┌────────────────────┐
+         │   Raw Dataset      │
+         └─────────┬──────────┘
+                   │
+                   ▼
+         ┌────────────────────┐
+         │ Data Validation    │
+         └─────────┬──────────┘
+                   │
+                   ▼
+         ┌────────────────────┐
+         │ Feature Engineering│
+         └─────────┬──────────┘
+                   │
+                   ▼
+         ┌────────────────────┐
+         │ Model Training     │
+         └─────────┬──────────┘
+                   │
+                   ▼
+         ┌────────────────────┐
+         │ Model Evaluation   │
+         └─────────┬──────────┘
+                   │
+                   ▼
+         ┌────────────────────┐
+         │ DVC Versioning     │
+         └─────────┬──────────┘
+                   │
+                   ▼
+         ┌────────────────────┐
+         │ MLflow Tracking    │
+         └─────────┬──────────┘
+                   │
+                   ▼
+         ┌────────────────────┐
+         │ Kubernetes Deploy  │
+         └────────────────────┘
+```
+
+---
 
 ## Banking Fraud Detection System
 
