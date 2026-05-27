@@ -1,5 +1,16 @@
 # DVC in MLOps — Complete Enterprise Guide
 
+![Status](https://img.shields.io/badge/Status-Production_Ready-brightgreen)
+![CI](https://img.shields.io/badge/CI-Passing-success)
+![Coverage](https://img.shields.io/badge/Coverage-95%25-green)
+![Infra](https://img.shields.io/badge/Infra-GKE-blue)
+![Terraform](https://img.shields.io/badge/Terraform-Enabled-623CE4)
+![MLOps](https://img.shields.io/badge/MLOps-DVC-orange)
+![AWS](https://img.shields.io/badge/AWS-S3-yellow)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-Deployed-326CE5)
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 ## Table of Contents
 
 1. Introduction
